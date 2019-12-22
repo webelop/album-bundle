@@ -1,0 +1,20 @@
+{
+    "name": "webelop/album-bundle",
+    "description": "Webelop Album is a photo management and publishing Symfony bundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jean-Charles Callu",
+            "email": "jcc@webelop.net"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webelop\\AlbumBundle\\": "src/"
+        }
+    }
+}
