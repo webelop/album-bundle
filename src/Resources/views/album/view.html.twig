@@ -1,0 +1,12 @@
+{% extends '@Album/album/index.html.twig' %}
+
+{% set title = tag.name %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+
+    {{ include('@Album/album/_picture_grid.html.twig', {tags: false}) }}
+{% endblock %}

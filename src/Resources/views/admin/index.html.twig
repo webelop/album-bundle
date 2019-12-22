@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title|default('Pictures') }}</title>
+        <link rel="shortcut icon" href="{{ asset('build/images/favicon.png') }}">
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+        {% block stylesheets %}
+            {# 'app' must match the first argument to addEntry() in webpack.config.js #}
+            {{ encore_entry_link_tags('admin') }}
+        {% endblock %}
+    </head>
+    <body data-auto-play-speed="{{ autoPlaySpeed|default(5000) }}">
+        <div class="container-fluid">
+            <h1>{{ title|default('Pictures') }}</h1>
+            <div class="row">
+                <div class="col-md-3">
+                {% block sidebar %}
+                    {{ render(controller('Webelop\\AlbumBundle\\Controller\\AdminController:sidebar', {path: app.request.attributes.get('path')})) }}
+                {%  endblock %}
+                </div>
+                <div class="col-md-9">
+                    {% block body %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+        {{ include('@Album/album/_slideshow.html.twig', {tags: tags|default([])}) }}
+
+        {% block javascripts %}
+            {{ encore_entry_script_tags('admin') }}
+        {% endblock %}
+
+    </body>
+</html>

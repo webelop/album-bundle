@@ -1,0 +1,24 @@
+{% extends '@Album/admin/index.html.twig' %}
+
+{% set title = 'Tag: ' ~ tag.name %}
+
+{% block body %}
+    <div class="row">
+        {% if tag.id %}
+        <div class="col-md-4">
+            <a href="{{ path('tag_view', {hash: tag.hash, slug: tag.slug}) }}" class="btn btn-success">
+                <i class="far fa-new-window"></i> Sharing is caring!
+            </a>
+        </div>
+        {% endif %}
+        <div class="col-md-8">
+            {{ form(form, {action:path('admin_tag_edit', {id:tag.id}) }) }}
+        </div>
+    </div>
+
+    {{ include('@Album/album/_picture_grid.html.twig', {tags:true}) }}
+{% endblock %}
+
+{% block sidebar %}
+    {{ render(controller('Webelop\\AlbumBundle\\Controller\\AdminController:sidebar', {type: 'tag'})) }}
+{% endblock %}

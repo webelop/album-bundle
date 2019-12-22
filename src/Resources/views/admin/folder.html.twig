@@ -1,0 +1,13 @@
+{% extends '@Album/admin/index.html.twig' %}
+
+{% set title = folder is defined ? folder.name : title|default('Pictures') %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+        </div>
+    </div>
+
+    {{ include('@Album/album/_picture_grid.html.twig') }}
+
+{% endblock %}

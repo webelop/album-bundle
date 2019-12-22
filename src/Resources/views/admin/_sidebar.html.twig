@@ -1,0 +1,57 @@
+{% set depth = 0 %}
+<ul class="nav flex-column jca-sidenav">
+    <li>
+        <em>{{ app.user.username }}</em>
+    </li>
+    <li>
+        <a href="{{ path('app_logout') }}"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+    </li>
+    <li>
+        <b>Categories:</b>
+    </li>
+    <li>
+        <a href="{{ path('admin_folder') }}">All pictures</a>
+    </li>
+    <li>
+        <a href="{{ path('admin_tags') }}">All tags</a>
+    </li>
+    <li>
+        <a href="{{ path('admin_tagged_pictures') }}">All tagged pictures</a>
+    </li>
+    <li>
+        <a href="{{ path('admin_tag_edit') }}"><i class="fas fa-plus"></i> New tag</a>
+    </li>
+
+    {% for tag in tags %}
+        {% if loop.first %}
+        <li><b>Tags:</b></li>
+        {% endif %}
+        <li>
+            <a href='{{ path('admin_tag_edit', {'id' : tag.id}) }}'>
+                {% if tag.class %}<i class="fas fa-{{tag.class}}"></i>{% endif %}
+                {{ tag.name }}
+                {% if(tag.global)%}<sup>*</sup>{% endif %}
+            </a>
+
+        </li>
+    {% endfor %}
+
+    {% for folder in folders %}
+        {% if loop.first %}
+            <li><b>Folders:</b></li>
+        {% endif %}
+        <li>
+            {% if(folder.depth) > depth %}
+            <ul class="nav flex-column"><li>
+            {% endif %}
+
+            <a href='{{ path('admin_folder', {'path' : folder.path}) }}'>{{ folder.name }}</a>
+
+            {% if(folder.depth) < depth %}
+                </li></ul>
+            {% endif %}
+        </li>
+        {% set depth = folder.depth %}
+    {% endfor %}
+
+</ul>

@@ -1,0 +1,20 @@
+<div class="row">
+    {% for picture in pictures %}
+        {% set url = path('picture', {'mode' : 'fit', 'width' : '2048', 'height' : '1560', 'hash' : picture.hash }) %}
+        {% if picture.stream %}
+            {% set url = path('stream', {'hash' : picture.hash, '_format': 'mp4'}) %}
+        {% endif %}
+        <div class="pull-left media m-1">
+            <a class="img-thumbnail" href="{{ url }}"
+               data-src="{{ picture.path }}" data-picture="{{ picture.hash }}"
+               data-tags="{{ tags ? picture.tagHashes|join(',') : '' }}">
+                {% if picture.stream %}
+                    <i class="fas fa-play"></i>
+                {% endif %}
+
+                <img src="{{ path('picture', {'mode' : 'crop', 'width' : '200', 'height' : '200', 'hash' : picture.hash }) }}"
+                     class="sz200x200"/>
+            </a>
+        </div>
+    {% endfor %}
+</div>

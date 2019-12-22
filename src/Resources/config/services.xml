@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Webelop\AlbumBundle\Controller\AdminController" public="false">
+            <tag name="controller.service_arguments" />
+            <argument type="service" id="Webelop\AlbumBundle\Service\FolderManager"/>
+        </service>
+
+        <service id="Webelop\AlbumBundle\Service\FolderManager" alias="webelop_album.folder_manager"/>
+        <service id="webelop_album.folder_manager" class="Webelop\AlbumBundle\Service\FolderManager">
+            <argument type="collection">
+                <argument key="album_root" type="string"/>
+                <argument key="cache_path" type="string"/>
+            </argument>
+            <argument type="service" id="doctrine.orm.entity_manager"/>
+        </service>
+
+
+        <service id="webelop_album.picture_manager" class="Webelop\AlbumBundle\Service\PictureManager">
+            <argument type="collection">
+                <argument key="album_root" type="string"/>
+                <argument key="salt" type="string"/>
+                <argument key="cache_path" type="string"/>
+                <argument key="execute_resize" type="constant">FALSE</argument>
+            </argument>
+            <argument type="service" id="Webelop\AlbumBundle\Repository\PictureRepository"/>
+            <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
+            <argument type="service" id="Psr\Log\LoggerInterface"/>
+        </service>
+
+        <service id="Webelop\AlbumBundle\Repository\PictureRepository" public="false">
+            <tag name="doctrine.repository_service" />
+            <argument type="service" id="doctrine" />
+        </service>
+
+    </services>
+</container>

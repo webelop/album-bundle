@@ -1,0 +1,15 @@
+{% extends '@Album/admin/index.html.twig' %}
+
+{% set title = 'All tags' %}
+
+{% block body %}
+<div class="row">
+    <a href='{{ path('admin_tag_edit') }}' class="btn btn-success">
+        <i class="fas fa-plus"></i> New tag
+    </a>
+</div>
+{% endblock %}
+
+{% block sidebar %}
+    {{ render(controller('Webelop\\AlbumBundle\\Controller\\AdminController:sidebar', {type: 'tag'})) }}
+{% endblock %}
