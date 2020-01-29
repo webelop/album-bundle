@@ -1,4 +1,4 @@
-{% extends '@Album/album/index.html.twig' %}
+{% extends '@WebelopAlbum/album/index.html.twig' %}
 
 {% set title = tag.name %}
 
@@ -8,5 +8,5 @@
         </div>
     </div>
 
-    {{ include('@Album/album/_picture_grid.html.twig', {tags: false}) }}
+    {{ include('@WebelopAlbum/album/_picture_grid.html.twig', {tags: false}) }}
 {% endblock %}

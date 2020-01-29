@@ -39,7 +39,7 @@ class MediaController extends AbstractController
      */
     public function download(PictureManager $pictureManager, $hash)
     {
-        $pictureRepo = $this->getDoctrine()->getRepository('AlbumBundle:Picture');
+        $pictureRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
         $picture = $pictureRepo->findOneByHash($hash);
         $cachePath = $pictureManager->downloadFile($picture);
 
@@ -54,7 +54,7 @@ class MediaController extends AbstractController
      */
     public function streamAction(PictureManager $pictureManager, Request $request, $hash)
     {
-        $pictureRepo = $this->getDoctrine()->getRepository('AlbumBundle:Picture');
+        $pictureRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
         $picture = $pictureRepo->findOneByHash($hash);
         $cachePath = $pictureManager->prepareStream($picture, $request->getRequestFormat());
 

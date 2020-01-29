@@ -34,7 +34,7 @@ class AdminController extends AbstractController
      */
     public function index()
     {
-        return $this->render('@Album/admin/index.html.twig', [
+        return $this->render('@WebelopAlbum/admin/index.html.twig', [
             'title' => 'Picture manager'
         ]);
     }
@@ -53,7 +53,7 @@ class AdminController extends AbstractController
         $pictures = $folderManager->listMediaFiles($folder);
         $tags = $tagRepository->findByGlobal(1);
 
-        return $this->render('@Album/admin/folder.html.twig', [
+        return $this->render('@WebelopAlbum/admin/folder.html.twig', [
             'folder' => $folder,
             'pictures' => $pictures,
             'tags' => $tags
@@ -73,7 +73,7 @@ class AdminController extends AbstractController
             $folders = $folderManager->listFolders($path);
         }
 
-        return $this->render('@Album/admin/_sidebar.html.twig', [
+        return $this->render('@WebelopAlbum/admin/_sidebar.html.twig', [
             'folders' => $folders,
             'tags' => $tags,
         ]);
@@ -86,9 +86,9 @@ class AdminController extends AbstractController
      */
     public function tagList()
     {
-        $tagRepository = $this->getDoctrine()->getRepository('AlbumBundle:Tag');
+        $tagRepository = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Tag');
 
-        return $this->render('@Album/admin/tag_list.html.twig', [
+        return $this->render('@WebelopAlbum/admin/tag_list.html.twig', [
             'tags' => $tagRepository->findBy([], ['global' => 'DESC', 'id' => 'DESC'])
         ]);
     }
@@ -131,7 +131,7 @@ class AdminController extends AbstractController
             $tags[] = $tag;
         }
 
-        return $this->render('@Album/admin/tag_edit.html.twig', [
+        return $this->render('@WebelopAlbum/admin/tag_edit.html.twig', [
             'tag' => $tag,
             'pictures' => $pictures,
             'tags' => $tags,
@@ -155,7 +155,7 @@ class AdminController extends AbstractController
 
         $tags = $tagRepository->findByGlobal(true);
 
-        return $this->render('@Album/admin/folder.html.twig', [
+        return $this->render('@WebelopAlbum/admin/folder.html.twig', [
             'pictures' => $pictures,
             'tags' => $tags,
             'title' => 'All tagged pictures',
@@ -170,8 +170,8 @@ class AdminController extends AbstractController
     public function tagPicture($tag, $pic, $state)
     {
         $em = $this->getDoctrine()->getManager();
-        $tagRepository = $this->getDoctrine()->getRepository('AlbumBundle:Tag');
-        $pictureRepository = $this->getDoctrine()->getRepository('AlbumBundle:Picture');
+        $tagRepository = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Tag');
+        $pictureRepository = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
         $tagObject = $tagRepository->findOneBy(array('hash' => $tag));
         $picture = $pictureRepository->findOneBy(array('hash' => $pic));
 

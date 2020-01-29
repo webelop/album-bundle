@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        {{ include('@Album/album/_slideshow.html.twig', {tags: tags|default([])}) }}
+        {{ include('@WebelopAlbum/album/_slideshow.html.twig', {tags: tags|default([])}) }}
 
         {% block javascripts %}
             {{ encore_entry_script_tags('admin') }}

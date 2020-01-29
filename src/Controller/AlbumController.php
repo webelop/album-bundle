@@ -37,7 +37,7 @@ class AlbumController extends AbstractController
         } catch (\Exception $e) {
 
         }
-        return $this->render('@Album/album/index.html.twig');
+        return $this->render('@WebelopAlbum/album/index.html.twig');
     }
 
     /**
@@ -45,8 +45,8 @@ class AlbumController extends AbstractController
      */
     public function view($hash, $slug)
     {
-        $tagRepo = $this->getDoctrine()->getRepository('AlbumBundle:Tag');
-        $picRepo = $this->getDoctrine()->getRepository('AlbumBundle:Picture');
+        $tagRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Tag');
+        $picRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
         $tag = $tagRepo->findOneByHash($hash);
 
         if (empty($tag)) {
@@ -67,7 +67,7 @@ class AlbumController extends AbstractController
     public function download($hash)
     {
         $em = $this->getDoctrine()->getManager();
-        $pictureRepo = $this->getDoctrine()->getRepository('AlbumBundle:Picture');
+        $pictureRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
         $picture = $pictureRepo->findOneByHash($hash);
 
         $container = $this->get('service_container');
@@ -86,7 +86,7 @@ class AlbumController extends AbstractController
     public function streamAction(Request $request, $hash)
     {
         $em = $this->getDoctrine()->getManager();
-        $pictureRepo = $this->getDoctrine()->getRepository('AlbumBundle:Picture');
+        $pictureRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
         $picture = $pictureRepo->findOneByHash($hash);
 
         $container = $this->get('service_container');

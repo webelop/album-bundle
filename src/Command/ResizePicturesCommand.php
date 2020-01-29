@@ -64,8 +64,8 @@ class ResizePicturesCommand extends ContainerAwareCommand
 
         $doctrine = $this->getContainer()->get('doctrine');
         $em = $doctrine->getManager();
-        $folderRepo = $doctrine->getRepository('AlbumBundle:Folder');
-        $pictureRepo = $doctrine->getRepository('AlbumBundle:Picture');
+        $folderRepo = $doctrine->getRepository('WebelopAlbumBundle::Folder');
+        $pictureRepo = $doctrine->getRepository('WebelopAlbumBundle::Picture');
 
         $folders = array();
 
@@ -116,7 +116,7 @@ class ResizePicturesCommand extends ContainerAwareCommand
     private function resizeOnePicture()
     {
         $doctrine = $this->getContainer()->get('doctrine');
-        $pictureRepo = $doctrine->getRepository('AlbumBundle:Picture');
+        $pictureRepo = $doctrine->getRepository('WebelopAlbumBundle::Picture');
 
         $picture = $pictureRepo->findOneByResized(0);
         if ($picture) {

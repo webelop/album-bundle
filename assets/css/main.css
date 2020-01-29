@@ -1,0 +1,117 @@
+@import url(http://fonts.googleapis.com/css?family=Kaushan+Script);
+
+.hidden {
+    display: none!important;
+}
+
+.wrapper {
+    width: 980px;
+    margin: 0 auto;
+}
+
+.wrapper h1 {
+    font-family: 'Kaushan Script', cursive;
+    margin-left: 30px;
+}
+
+.photo-list {
+    clear:both;
+    margin: 0 auto;
+}
+
+.photo-container {
+    float:left;
+    padding: 10px;
+    margin:10px;
+    box-shadow: 5px 5px 3px #888888;
+    background: #dbc59e;
+}
+
+.admin .photo-container {
+    height: 220px;
+}
+
+.highslide-credits {
+    display:none !important;
+}
+
+.media .active {
+    background-color: #e4c49c;
+}
+
+a.img-thumbnail {
+    position:relative;
+}
+
+a.img-thumbnail .fas {
+    position: absolute;
+    top: 75px;
+    left: 75px;
+    font-size: 3em;
+    color: white;
+}
+
+img.sz200x200 {
+    width: 200px;
+    height: 200px;
+}
+
+.slideshow {
+    z-index: 100000;
+    width: 100%;
+    height: 100%;
+    background: black;
+    top: 0; left: 0;
+    position: fixed;
+    opacity: 1;
+}
+
+.slideshow .picture {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 10px 10px 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slideshow .picture img,
+.slideshow .picture video {
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.slideshow .controls-container {
+    width:100%;
+    position:absolute;
+    bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.slideshow .controls {
+    margin: 0 auto;
+    background: #BAD6AF;
+    display: inline-block;
+    padding: 6px;
+    border-radius: 3px;
+}
+
+.slideshow .controls a {
+    margin-left: 0 5px
+}
+.slideshow .controls a.new-group {
+    margin-left: 40px
+}
+.slideshow .controls div.dropdown {
+    display: inline-block;
+}
+.slideshow .controls div.dropdown .dropdown-menu {
+    top:initial;
+    left:initial;
+    bottom: 34px;
+    right: -1px;
+    text-align: left;
+}

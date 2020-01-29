@@ -42,8 +42,8 @@ class FolderManager
         $this->em = $em;
         $this->parameters = $parameters;
 
-        $this->folderRepo = $this->em->getRepository('AlbumBundle:Folder');
-        $this->pictureRepo = $this->em->getRepository('AlbumBundle:Picture');
+        $this->folderRepo = $this->em->getRepository(Entity\Folder::class);
+        $this->pictureRepo = $this->em->getRepository(Entity\Picture::class);
     }
 
     public function findOneFolderByPath($path)

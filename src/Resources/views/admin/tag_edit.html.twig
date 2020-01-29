@@ -1,4 +1,4 @@
-{% extends '@Album/admin/index.html.twig' %}
+{% extends '@WebelopAlbum/admin/index.html.twig' %}
 
 {% set title = 'Tag: ' ~ tag.name %}
 
@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    {{ include('@Album/album/_picture_grid.html.twig', {tags:true}) }}
+    {{ include('@WebelopAlbum/album/_picture_grid.html.twig', {tags:true}) }}
 {% endblock %}
 
 {% block sidebar %}
