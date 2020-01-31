@@ -93,9 +93,11 @@ import ZingTouch from 'zingtouch'
             function showNextImage() {
                 showImage(self.getThumbnail(+1));
             }
+
             function showPreviousImage() {
                 showImage(self.getThumbnail(-1));
             }
+
             function showImageAtCursor(cursor) {
                 showImage($thumbnails[(total + cursor - 1) % total])
             }
@@ -215,7 +217,7 @@ import ZingTouch from 'zingtouch'
                     toggleAutoplay()
                 })
                 .on('click', 'a.download', function(e){
-                    e.preventDefault();
+                    // e.preventDefault();
 
                     $(this).attr('href', $(this).data('href').replace('XXX', $(self.getThumbnail()).data('picture')));
                 })

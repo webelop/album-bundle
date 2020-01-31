@@ -69,7 +69,7 @@ class FolderManager
         $root = $this->parameters['album_root'];
         if (!is_dir($root)) {
             throw new \UnexpectedValueException(
-                'Please make sure that WEBELOP_ALBUM_ROOT is set to a valid directory in .env'
+                'Invalid Webelop\AlbumBundle configuration: album_root must be an existing directory. '.$root
             );
         }
 

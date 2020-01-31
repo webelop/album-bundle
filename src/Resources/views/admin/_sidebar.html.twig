@@ -10,16 +10,16 @@
         <b>Categories:</b>
     </li>
     <li>
-        <a href="{{ path('admin_folder') }}">All pictures</a>
+        <a href="{{ path('webelop_album_admin_folder') }}">All pictures</a>
     </li>
     <li>
-        <a href="{{ path('admin_tags') }}">All tags</a>
+        <a href="{{ path('webelop_album_admin_tags') }}">All tags</a>
     </li>
     <li>
-        <a href="{{ path('admin_tagged_pictures') }}">All tagged pictures</a>
+        <a href="{{ path('webelop_album_admin_tagged_pictures') }}">All tagged pictures</a>
     </li>
     <li>
-        <a href="{{ path('admin_tag_edit') }}"><i class="fas fa-plus"></i> New tag</a>
+        <a href="{{ path('webelop_album_admin_tag_new') }}"><i class="fas fa-plus"></i> New tag</a>
     </li>
 
     {% for tag in tags %}
@@ -27,7 +27,7 @@
         <li><b>Tags:</b></li>
         {% endif %}
         <li>
-            <a href='{{ path('admin_tag_edit', {'id' : tag.id}) }}'>
+            <a href='{{ path('webelop_album_admin_tag_edit', {'id' : tag.id}) }}'>
                 {% if tag.class %}<i class="fas fa-{{tag.class}}"></i>{% endif %}
                 {{ tag.name }}
                 {% if(tag.global)%}<sup>*</sup>{% endif %}
@@ -45,7 +45,7 @@
             <ul class="nav flex-column"><li>
             {% endif %}
 
-            <a href='{{ path('admin_folder', {'path' : folder.path}) }}'>{{ folder.name }}</a>
+            <a href='{{ path('webelop_album_admin_folder', {'path' : folder.path}) }}'>{{ folder.name }}</a>
 
             {% if(folder.depth) < depth %}
                 </li></ul>

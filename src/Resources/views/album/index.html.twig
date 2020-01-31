@@ -7,7 +7,7 @@
         <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+            <link rel="stylesheet" href="{{ asset('bundles/webelopalbum/app.css') }}">
         {% endblock %}
 
     </head>
@@ -27,11 +27,7 @@
         {{ include('@WebelopAlbum/album/_slideshow.html.twig', {tags: []}) }}
 
         {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-
-            <!-- Renders app.js & a webpack runtime.js file
-                <script src="/build/runtime.js"></script>
-                <script src="/build/app.js"></script> -->
+            <script src="{{ asset('bundles/webelopalbum/app.js') }}"></script>
         {% endblock %}
     </body>
 </html>

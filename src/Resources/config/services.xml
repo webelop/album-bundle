@@ -5,11 +5,26 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="webelop_album.controller.admin_controller" class="Webelop\AlbumBundle\Controller\AdminController">
-            <tag name="controller.service_arguments" />
-            <argument type="service" id="Webelop\AlbumBundle\Service\FolderManager"/>
+        <!-- Controllers -->
+        <service id="webelop_album.controller.album_controller" class="Webelop\AlbumBundle\Controller\AlbumController" public="true" autowire="true">
+            <argument type="service" id="Webelop\AlbumBundle\Repository\TagRepository" />
+            <argument type="service" id="Webelop\AlbumBundle\Repository\PictureRepository" />
+            <tag name="container.service_subscriber" />
         </service>
 
+        <service id="webelop_album.controller.media_controller" class="Webelop\AlbumBundle\Controller\MediaController" public="true" autowire="true">
+            <argument type="service" id="webelop_album.picture_manager"/>
+            <tag name="container.service_subscriber" />
+        </service>
+
+        <service id="webelop_album.controller.admin_controller" class="Webelop\AlbumBundle\Controller\AdminController" public="true" autowire="true">
+            <argument type="service" id="Webelop\AlbumBundle\Service\FolderManager"/>
+            <argument type="service" id="Webelop\AlbumBundle\Repository\TagRepository"/>
+            <argument type="service" id="Webelop\AlbumBundle\Repository\PictureRepository"/>
+            <tag name="container.service_subscriber" />
+        </service>
+
+        <!-- Services -->
         <service id="Webelop\AlbumBundle\Service\FolderManager" alias="webelop_album.folder_manager"/>
         <service id="webelop_album.folder_manager" class="Webelop\AlbumBundle\Service\FolderManager">
             <argument type="collection">
@@ -19,7 +34,6 @@
             <argument type="service" id="doctrine.orm.entity_manager"/>
         </service>
 
-
         <service id="webelop_album.picture_manager" class="Webelop\AlbumBundle\Service\PictureManager">
             <argument type="collection">
                 <argument key="album_root" type="string"/>
@@ -28,13 +42,16 @@
                 <argument key="execute_resize" type="constant">FALSE</argument>
             </argument>
             <argument type="service" id="Webelop\AlbumBundle\Repository\PictureRepository"/>
-            <argument type="service" id="Symfony\Component\Routing\RouterInterface"/>
-            <argument type="service" id="Psr\Log\LoggerInterface"/>
         </service>
 
+        <!-- Repositories -->
         <service id="Webelop\AlbumBundle\Repository\PictureRepository" public="false">
-            <tag name="doctrine.repository_service" />
-            <argument type="service" id="doctrine" />
+            <tag name="doctrine.repository_service"/>
+            <argument type="service" id="doctrine"/>
+        </service>
+        <service id="Webelop\AlbumBundle\Repository\TagRepository" public="false">
+            <tag name="doctrine.repository_service"/>
+            <argument type="service" id="doctrine"/>
         </service>
 
     </services>

@@ -7,6 +7,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * Configuration for AlbumBundle
+ *
+ * TODO: Add configurable logout route
  */
 class Configuration implements ConfigurationInterface
 {

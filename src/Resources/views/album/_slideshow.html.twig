@@ -11,13 +11,13 @@
 
                 {% for k,tag in tags %}
                 <a class="tag btn btn-light {% if k == 0 %}new-group{% endif %}"
-                   href="{{ path('admin_tag_picture', {'pic' : 'XXX', 'tag' : tag.hash, 'state' : 'YYY'}) }}"
+                   href="{{ path('webelop_album_admin_tag_picture', {'tag' : tag.hash, 'pic' : 'XXX', 'state' : 'YYY'}) }}"
                    title="{{ tag.name }}" data-hash="{{ tag.hash }}">
                     <i class="fas fa-{{ tag.class }}"></i>
                 </a>
                 {% endfor %}
 
-                <a class="download btn btn-warning new-group" data-href="{{ path('download', {'hash' : 'XXX'}) }}" title="Download original file">
+                <a class="download btn btn-warning new-group" data-href="{{ path('webelop_album_download', {'hash' : 'XXX'}) }}" title="Download original file">
                     <i class="fas fa-download"></i>
                 </a>
                 <a href="#fullscreen" class="btn btn-light fullscreen"><i class="fas fa-expand-arrows-alt"></i></a>

@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Webelop\AlbumBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\{Request, Response, RedirectResponse};
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Webelop\AlbumBundle\Entity\{Album, Folder, Picture, Tag};
+use Webelop\AlbumBundle\Entity\{Album, Picture, Tag};
 use Webelop\AlbumBundle\Form;
+use Webelop\AlbumBundle\Repository\PictureRepository;
+use Webelop\AlbumBundle\Repository\TagRepository;
 use Webelop\AlbumBundle\Service\FolderManager;
 
 /**
@@ -21,16 +23,31 @@ class AdminController extends AbstractController
 {
     /** @var FolderManager */
     private $folderManager;
+    /** @var TagRepository */
+    private $tagRepository;
+    /** @var PictureRepository */
+    private $pictureRepository;
 
-    public function __construct(FolderManager $folderManager)
+    /**
+     * @param FolderManager     $folderManager
+     * @param TagRepository     $tagRepository
+     * @param PictureRepository $pictureRepository
+     */
+    public function __construct(
+        FolderManager $folderManager,
+        TagRepository $tagRepository,
+        PictureRepository $pictureRepository
+    )
     {
         $this->folderManager = $folderManager;
+        $this->tagRepository = $tagRepository;
+        $this->pictureRepository = $pictureRepository;
     }
 
     /**
-     * @Route("/", name = "admin_index")
-     * @Template()
      * Based on a root path, show subfolders as actual folders (image containers)
+     *
+     * @return Response
      */
     public function index()
     {
@@ -40,18 +57,19 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/folder/{path}", name = "admin_folder", requirements={"path" = ".*"})
+     * @param string $path
+     *
+     * @return Response
      */
-    public function folder(FolderManager $folderManager, $path = '/')
+    public function folder($path = '/')
     {
-        $tagRepository = $this->getDoctrine()->getRepository(Tag::class);
-        $folder = $folderManager->findOneFolderByPath($path);
+        $folder = $this->folderManager->findOneFolderByPath($path);
         if (!$folder) {
             throw $this->createNotFoundException();
         }
 
-        $pictures = $folderManager->listMediaFiles($folder);
-        $tags = $tagRepository->findByGlobal(1);
+        $pictures = $this->folderManager->listMediaFiles($folder);
+        $tags = $this->tagRepository->findByGlobal(1);
 
         return $this->render('@WebelopAlbum/admin/folder.html.twig', [
             'folder' => $folder,
@@ -61,16 +79,19 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/sidebar", name = "admin_sidebar", requirements={"path" = ".*"})
+     * @param string|null $path
+     * @param string      $type
+     *
+     * @return Response
      */
-    public function sidebar(FolderManager $folderManager, string $path = null, string $type = 'folder')
+    public function sidebar(string $path = null, string $type = 'folder')
     {
         $tags = $folders = [];
         if ('tag' === $type) {
             $tags = $this->getDoctrine()->getRepository(Tag::class)
                 ->findBy([], ['global' => 'DESC', 'id' => 'DESC']);
         } else {
-            $folders = $folderManager->listFolders($path);
+            $folders = $this->folderManager->listFolders($path);
         }
 
         return $this->render('@WebelopAlbum/admin/_sidebar.html.twig', [
@@ -80,37 +101,32 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/tags", name = "admin_tags")
-     *
-     * @return array
+     * @return Response
      */
     public function tagList()
     {
-        $tagRepository = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Tag');
-
         return $this->render('@WebelopAlbum/admin/tag_list.html.twig', [
-            'tags' => $tagRepository->findBy([], ['global' => 'DESC', 'id' => 'DESC'])
+            'tags' => $this->tagRepository->findBy([], ['global' => 'DESC', 'id' => 'DESC'])
         ]);
     }
 
     /**
-     * @Route("/tag/{id}", name = "admin_tag_edit", defaults = {"id": ""})
+     * @param Request  $request
+     * @param int|null $id
      *
-     * @return array
+     * @return RedirectResponse|Response
      */
-    public function tagEdit(Request $request, $id)
+    public function tagEdit(Request $request, int $id = null)
     {
         $em = $this->getDoctrine()->getManager();
-        $tagRepository = $this->getDoctrine()->getRepository(Tag::class);
 
         if ($id > 0) {
-            $picRepo = $this->getDoctrine()->getRepository(Picture::class);
-            $tag = $tagRepository->find($id);
+            $tag = $this->tagRepository->find($id);
             if (empty($tag)) {
                 throw $this->createNotFoundException('Tag not found');
             }
 
-            $pictures = $picRepo->findByTag($tag, array('originalDate', 'ASC'));
+            $pictures = $this->pictureRepository->findByTag($tag, array('originalDate', 'ASC'));
         } else {
             $tag = new Tag();
             $tag->setHash(substr(uniqid(), 0, 10));
@@ -123,10 +139,10 @@ class AdminController extends AbstractController
             $em->persist($tag);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('admin_tag_edit', array('id' => $tag->getId())));
+            return $this->redirect($this->generateUrl('webelop_album_admin_tag_edit', array('id' => $tag->getId())));
         }
 
-        $tags = $tagRepository->findByGlobal(true);
+        $tags = $this->tagRepository->findByGlobal(true);
         if (!$tag->getGlobal()) {
             $tags[] = $tag;
         }
@@ -140,20 +156,19 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/tagged", name = "admin_tagged_pictures")
+     * @param Request $request
+     *
+     * @return Response
      */
     public function taggedPictures(Request $request)
     {
-        $tagRepository = $this->getDoctrine()->getRepository(Tag::class);
-        $picRepo = $this->getDoctrine()->getRepository(Picture::class);
-
-        $pictures = $picRepo->findTagged(
+        $pictures = $this->pictureRepository->findTagged(
             $request->query->get('limit', 200),
             $request->query->get('offset', 200),
             $request->query->get('random', true)
         );
 
-        $tags = $tagRepository->findByGlobal(true);
+        $tags = $this->tagRepository->findByGlobal(true);
 
         return $this->render('@WebelopAlbum/admin/folder.html.twig', [
             'pictures' => $pictures,
@@ -164,16 +179,17 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/tag/{tag}/picture/{pic}/state/{state}", name = "admin_tag_picture")
-     * Add a tag to a picture
+     * @param string $tag
+     * @param string $pic
+     * @param bool   $state
+     *
+     * @return Response
      */
-    public function tagPicture($tag, $pic, $state)
+    public function tagPicture(string $tag, string $pic, bool $state)
     {
         $em = $this->getDoctrine()->getManager();
-        $tagRepository = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Tag');
-        $pictureRepository = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
-        $tagObject = $tagRepository->findOneBy(array('hash' => $tag));
-        $picture = $pictureRepository->findOneBy(array('hash' => $pic));
+        $tagObject = $this->tagRepository->findOneBy(array('hash' => $tag));
+        $picture = $this->pictureRepository->findOneBy(array('hash' => $pic));
 
         if ($tagObject && $picture) {
             if ($state && !in_array($tag, $picture->getTagHashes())) {
@@ -184,19 +200,19 @@ class AdminController extends AbstractController
 
             $em->flush();
 
-            return new Response($state);
+            return new Response($state ? '1' : '0');
         }
 
         throw $this->createNotFoundException("Could not find tag [$tag] or picture [$pic]");
     }
 
     /**
-     * @Route("/pic/{id}/remove", name = "admin_picture_remove")
+     * @Route("/pic/{hash}/remove", name = "admin_picture_remove")
      *
      * todo: Adds "removed" to model, hide from web views
      * todo: Make view for removed photos and provide command for source file deletion with confirmation
      */
-    public function removePicture($id)
+    public function removePicture(string $hash)
     {
         return new \Symfony\Component\HttpFoundation\Response('OK');
     }

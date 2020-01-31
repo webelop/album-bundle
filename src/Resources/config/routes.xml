@@ -4,7 +4,66 @@
         xsi:schemaLocation="http://symfony.com/schema/routing
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="webelop_album_admin_index" controller="webelop_album.controller.admin_controller:index" path="/manager" >
-        <!-- settings -->
+    <!-- ALBUM CONTROLLER -->
+    <route id="webelop_album_index"
+           controller="webelop_album.controller.album_controller:index"
+           path="/">
+    </route>
+    <route id="webelop_album_tag_view"
+           controller="webelop_album.controller.album_controller:view"
+           path="/albums/{hash}/{slug}.html">
+    </route>
+
+    <!-- MEDIA CONTROLLER -->
+    <route id="webelop_album_picture"
+           controller="webelop_album.controller.media_controller:picture"
+           path="/pictures/{mode}/{width}/{height}/{hash}.jpg">
+        <requirement key="mode">fit|crop</requirement>
+        <requirement key="width">\d+</requirement>
+        <requirement key="height">\d+</requirement>
+        <requirement key="hash">[a-z0-9]+</requirement>
+    </route>
+    <route id="webelop_album_download"
+           controller="webelop_album.controller.media_controller:download"
+           path="/download/{hash}.jpg">
+        <requirement key="hash">[a-z0-9]+</requirement>
+    </route>
+    <route id="webelop_album_stream"
+           controller="webelop_album.controller.media_controller:stream"
+           path="/pictures/stream/{hash}.{_format}">
+        <requirement key="_format">mp4|webm</requirement>
+        <requirement key="hash">[a-z0-9]+</requirement>
+    </route>
+
+    <!-- ADMIN CONTROLLER-->
+    <route id="webelop_album_admin_index"
+           controller="webelop_album.controller.admin_controller:index"
+           path="/manager"/>
+    <route id="webelop_album_admin_folder"
+           controller="webelop_album.controller.admin_controller:folder"
+           path="/manager/folder/{path}">
+        <requirement key="path">.*</requirement>
+        <default key="path"/>
+    </route>
+    <route id="webelop_album_admin_tags"
+           controller="webelop_album.controller.admin_controller:tagList"
+           path="/manager/tags"/>
+    <route id="webelop_album_admin_tagged_pictures"
+           controller="webelop_album.controller.admin_controller:taggedPictures"
+           path="/manager/tagged"/>
+    <route id="webelop_album_admin_tag_edit"
+           controller="webelop_album.controller.admin_controller:tagEdit"
+           path="/manager/tag/{id}">
+        <requirement key="id">\d+</requirement>
+    </route>
+    <route id="webelop_album_admin_tag_new"
+           controller="webelop_album.controller.admin_controller:tagEdit"
+           path="/manager/tag"/>
+    <route id="webelop_album_admin_tag_picture"
+           controller="webelop_album.controller.admin_controller:tagPicture"
+           path="/tag/{tag}/picture/{pic}/state/{state}">
+        <requirement key="tag">\w+</requirement>
+        <requirement key="pic">\w+</requirement>
+        <requirement key="state">0|1|YYY</requirement>
     </route>
 </routes>

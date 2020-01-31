@@ -1,10 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 require('../css/main.css');
-require('../css/admin.css')
-require('./app')
+require('../css/admin.css');
+require('./app');
 
-import jQuery from 'jquery'
-import icons from './icons'
+import jQuery from 'jquery';
+import icons from './icons';
 
 (function(App, $, icons){
 	$('.slideshow').on('click', 'a.tag', function (e) {

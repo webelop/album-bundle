@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Webelop\AlbumBundle\Controller;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\IpUtils;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Annotation\Route;
-use Webelop\AlbumBundle\Service\PictureManager;
+use Symfony\Component\HttpFoundation\Response;
+use Webelop\AlbumBundle\Repository\PictureRepository;
+use Webelop\AlbumBundle\Repository\TagRepository;
 
 /**
  * Public facing controller: shows albums to non-logged user
@@ -20,95 +20,52 @@ use Webelop\AlbumBundle\Service\PictureManager;
  */
 class AlbumController extends AbstractController
 {
+    /** @var TagRepository */
+    private $tagRepository;
+
+    /** @var PictureRepository */
+    private $pictureRepository;
+
     /**
-     * @Route("/", name = "index")
-     * TODO: Make the local network rule configurable (turned off by default)
+     * @param TagRepository     $tagRepository
+     * @param PictureRepository $pictureRepository
+     */
+    public function __construct(TagRepository $tagRepository, PictureRepository $pictureRepository)
+    {
+        $this->tagRepository = $tagRepository;
+        $this->pictureRepository = $pictureRepository;
+    }
+
+    /**
+     * TODO: Create a redirect rule to manager for local network (Kernel event subscriber)
+     *
+     * @return Response
      */
     public function index()
     {
-        try {
-            // Redirect admin and local users to secure area
-            if (true === $this->get('security.context')->isGranted('ROLE_ADMIN') ||
-                true === IpUtils::checkIp($this->getRequest()->getClientIp(), '192.168.0.0/16') ||
-                $this->getRequest()->getClientIp() === '127.0.0.1'
-            ) {
-                return $this->redirect($this->generateUrl('admin_index'));
-            }
-        } catch (\Exception $e) {
-
-        }
         return $this->render('@WebelopAlbum/album/index.html.twig');
     }
 
     /**
-     * @Route("/albums/{hash}/{slug}.html", name="tag_view")
+     * @param string $hash
+     * @param string $slug
+     *
+     * @return Response
      */
-    public function view($hash, $slug)
+    public function view(string $hash, string $slug)
     {
-        $tagRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Tag');
-        $picRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
-        $tag = $tagRepo->findOneByHash($hash);
+        $tag = $this->tagRepository->findOneByHash($hash);
 
         if (empty($tag)) {
             throw $this->createNotFoundException('Tag not found');
         }
 
-        $pictures = $picRepo->findByTag($tag);
+        $pictures = $this->pictureRepository->findByTag($tag);
 
-        return $this->render('@Album\album\view.html.twig', [
+        return $this->render('@WebelopAlbum/album/view.html.twig', [
             'tag' => $tag,
             'pictures' => $pictures
         ]);
-    }
-
-    /**
-     * @Route("/download/{hash}.jpg", name="download")
-     */
-    public function download($hash)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $pictureRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
-        $picture = $pictureRepo->findOneByHash($hash);
-
-        $container = $this->get('service_container');
-        $root = $container->getParameter('album_root');
-        $source = $root . '/' . $picture->getFolder()->getPath() . '/' . $picture->getPath();
-
-        $response = new BinaryFileResponse($source);
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($picture->getPath()));
-
-        return $response;
-    }
-
-    /**
-     * @Route("/pictures/stream/{hash}.{_format}", name="stream", requirements={"_format":"mp4|webm"})
-     */
-    public function streamAction(Request $request, $hash)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $pictureRepo = $this->getDoctrine()->getRepository('WebelopAlbumBundle::Picture');
-        $picture = $pictureRepo->findOneByHash($hash);
-
-        $container = $this->get('service_container');
-        $root = $container->getParameter('album_root');
-        $source = $root . '/' . $picture->getFolder()->getPath() . '/.preview/' . $picture->getPath().'.'.$request->getRequestFormat();
-
-        if (!file_exists($source)) {
-            $this->createNotFoundException('Stream not found!');
-        }
-
-        $cache = $container->getParameter('cache_path');
-        $cachepath = $cache . '/stream/' . $hash . '.'.$request->getRequestFormat();
-
-        if (!is_dir($cache . '/stream/')) {
-            mkdir($cache . '/stream/');
-        }
-
-        if (!file_exists($cachepath) && !symlink($source, $cachepath)) {
-            $this->createNotFoundException('Stream link could not be created!');
-        }
-
-        return $this->redirectToRoute('stream', array('hash' => $hash, '_format' => $request->getRequestFormat()));
     }
 
 }
