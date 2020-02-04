@@ -1,12 +1,24 @@
-#Webelop/AlbumBundle
+# Webelop/AlbumBundle
 
-This is a complete [Synfony](https://symfony.com/doc/current/setup.html) bundle for running a light-weight photo browsing 
+This is a complete [Symfony](https://symfony.com/doc/current/setup.html) bundle for running a light-weight photo browsing 
 and sharing website on a PHP server.
 
 The server may resize and prepare the previews and video streams or rely on existing previews generated on the end-user's
 computer. As the bundle is designed to work on low-powered devices, it is advised to install the additional helpers on
 the local computers to synchronise and prepare the image previews.
- 
+
+## Requirements
+```
+        "php": "^7.1.3",
+        "doctrine/orm": "^2.7",
+        "doctrine/common": "^2.12",
+        "doctrine/doctrine-bundle": "^2.0",
+        "symfony/routing": "^5.0",
+        "symfony/twig-bundle": "^5.0",
+        "symfony/asset": "^5.0",
+        "symfony/security-bundle": "^5.0"
+```
+
 ## Installation
 - First install the composer package:
 ```composer install webelop/album-bundle```
