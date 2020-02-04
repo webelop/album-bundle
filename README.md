@@ -9,16 +9,7 @@ the local computers to synchronise and prepare the image previews.
 
 ## Requirements
 
-```
-        "php": "^7.1.3",
-        "doctrine/orm": "^2.7",
-        "doctrine/common": "^2.12",
-        "doctrine/doctrine-bundle": "^2.0",
-        "symfony/routing": "^5.0",
-        "symfony/twig-bundle": "^5.0",
-        "symfony/asset": "^5.0",
-        "symfony/security-bundle": "^5.0"
-```
+This bundle depends on Doctrine bundle, Symfony security, routing and Twig
 
 ## Installation
 - First install the composer package:
