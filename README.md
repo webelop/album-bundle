@@ -8,6 +8,7 @@ computer. As the bundle is designed to work on low-powered devices, it is advise
 the local computers to synchronise and prepare the image previews.
 
 ## Requirements
+
 ```
         "php": "^7.1.3",
         "doctrine/orm": "^2.7",
