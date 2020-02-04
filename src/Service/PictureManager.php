@@ -2,6 +2,7 @@
 
 namespace Webelop\AlbumBundle\Service;
 
+use InvalidArgumentException;
 use UnexpectedValueException;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
@@ -29,6 +30,9 @@ class PictureManager
         PictureRepository $pictureRepository
     )
     {
+        $this->checkFolder($parameters, 'cache_path');
+        $this->checkFolder($parameters, 'album_root');
+
         $this->pictureRepository = $pictureRepository;
         $this->parameters = $parameters;
     }
@@ -53,7 +57,6 @@ class PictureManager
         int $width,
         int $height,
         string $hash,
-        string $targetRelativePath,
         int $quality = 80
     ): string
     {
@@ -78,13 +81,15 @@ class PictureManager
             throw new \UnexpectedValueException('No such image at path ' . $source, Response::HTTP_NOT_FOUND);
         }
 
-        $cachepath = $cache . '/' . $targetRelativePath;
+        $targetRelativePath = implode(DIRECTORY_SEPARATOR, [$mode, $width, $height, "${hash}.jpg"]);
+        $cachepath = implode(DIRECTORY_SEPARATOR, [$cache, $targetRelativePath]);
         if (file_exists($cachepath) && filemtime($cachepath) > filemtime($source)) {
             // Give the resizer 3 seconds to work before exiting
             $sleep = 3.0;
             while (filesize($cachepath) === 0 && $sleep -= 1e5 > 0) {
                 usleep(1e5);
             }
+
             return $cachepath;
         }
 
@@ -110,12 +115,15 @@ class PictureManager
             file_put_contents($cachepath . '.log', 'missing file at ' . $previewPath);
         }
 
+        if (false === $this->parameters['execute_resize']) {
+            throw new \UnexpectedValueException(sprintf(
+                'Preview is missing at path %s!',
+                $cachepath
+            ));
+        }
+
         // Create the file to block concurrent resizes
         touch($cachepath);
-
-        if ($this->parameters['execute_resize']) {
-            return $cachepath;
-        }
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'slideresize') . '.jpg';
 
@@ -165,12 +173,18 @@ class PictureManager
     }
 
     /**
-     * @param Picture $picture
+     * @param string $hash
      *
      * @return string
      */
-    public function downloadFile(Picture $picture): string
+    public function downloadFile(string $hash): string
     {
+        /** @var Picture $picture */
+        $picture = $this->pictureRepository->findOneByHash($hash);
+        if (!$picture) {
+            throw new \UnexpectedValueException('Missing picture with hash ' . $hash, Response::HTTP_NOT_FOUND);
+        }
+
         $source = $this->parameters['album_root'] . '/' . $picture->getFolder()->getPath() . '/' . $picture->getPath();
         if (!file_exists($source)) {
             throw new UnexpectedValueException(sprintf('File %s does not exist!', $source), Response::HTTP_NOT_FOUND);
@@ -182,13 +196,19 @@ class PictureManager
     /**
      * Creates a link from video preview to public folder and redirects to it
      *
-     * @param Picture $picture
-     * @param string  $extension
+     * @param string $hash
+     * @param string $extension
      *
      * @return string
      */
-    public function prepareStream(Picture $picture, string $extension): string
+    public function prepareStream(string $hash, string $extension): string
     {
+        /** @var Picture $picture */
+        $picture = $this->pictureRepository->findOneByHash($hash);
+        if (!$picture) {
+            throw new \UnexpectedValueException('Missing picture with hash ' . $hash, Response::HTTP_NOT_FOUND);
+        }
+
         $root = $this->parameters['album_root'];
         $source = $root . '/' . $picture->getFolder()->getPath() . '/.preview/' . $picture->getPath() . '.' . $extension;
 
@@ -208,6 +228,18 @@ class PictureManager
         }
 
         return $cachePath;
+    }
+
+
+    /**
+     * @param array  $config
+     * @param string $key
+     */
+    private function checkFolder(array $config, string $key): void
+    {
+        if (!array_key_exists($key, $config) || !$config[$key] || !is_dir($config[$key]) || !is_readable($config[$key])) {
+            throw new InvalidArgumentException("Configuration ${key} must be a valid, readable folder ".$config[$key]);
+        }
     }
 
 }

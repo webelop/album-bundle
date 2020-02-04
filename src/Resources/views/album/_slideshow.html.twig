@@ -1,6 +1,6 @@
 <div class="slideshow hidden">
     <div class="picture">
-        <img src="{{ asset('build/images/loading.gif') }}" class="align-self-center"/>
+        <img src="{{ asset('bundles/webelopalbum/images/loading.gif') }}" class="align-self-center"/>
         <video class="hidden" controls autoplay></video>
 
         <div class="controls-container">
@@ -17,7 +17,10 @@
                 </a>
                 {% endfor %}
 
-                <a class="download btn btn-warning new-group" data-href="{{ path('webelop_album_download', {'hash' : 'XXX'}) }}" title="Download original file">
+                <a class="download btn btn-warning new-group"
+                   data-href="{{ path('webelop_album_download', {'hash' : 'abcdef'}) }}"
+                   title="Download original file"
+                >
                     <i class="fas fa-download"></i>
                 </a>
                 <a href="#fullscreen" class="btn btn-light fullscreen"><i class="fas fa-expand-arrows-alt"></i></a>
@@ -26,7 +29,7 @@
         </div>
     </div>
     <div class="hidden">
-        <img class="prevloader" src="{{ asset('build/images/loading.gif') }}">
-        <img class="nextloader" src="{{ asset('build/images/loading.gif') }}">
+        <img class="prevloader" src="{{ asset('bundles/webelopalbum/images/loading.gif') }}">
+        <img class="nextloader" src="{{ asset('bundles/webelopalbum/images/loading.gif') }}">
     </div>
 </div>

@@ -16,7 +16,7 @@
 
     <!-- MEDIA CONTROLLER -->
     <route id="webelop_album_picture"
-           controller="webelop_album.controller.media_controller:picture"
+           controller="webelop_album.controller.media_controller:pictureAction"
            path="/pictures/{mode}/{width}/{height}/{hash}.jpg">
         <requirement key="mode">fit|crop</requirement>
         <requirement key="width">\d+</requirement>
@@ -24,12 +24,12 @@
         <requirement key="hash">[a-z0-9]+</requirement>
     </route>
     <route id="webelop_album_download"
-           controller="webelop_album.controller.media_controller:download"
-           path="/download/{hash}.jpg">
+           controller="webelop_album.controller.media_controller:downloadAction"
+           path="/pictures/download/{hash}.jpg">
         <requirement key="hash">[a-z0-9]+</requirement>
     </route>
     <route id="webelop_album_stream"
-           controller="webelop_album.controller.media_controller:stream"
+           controller="webelop_album.controller.media_controller:streamAction"
            path="/pictures/stream/{hash}.{_format}">
         <requirement key="_format">mp4|webm</requirement>
         <requirement key="hash">[a-z0-9]+</requirement>
@@ -62,7 +62,7 @@
     <route id="webelop_album_admin_tag_picture"
            controller="webelop_album.controller.admin_controller:tagPicture"
            path="/tag/{tag}/picture/{pic}/state/{state}">
-        <requirement key="tag">\w+</requirement>
+        <requirement key="tag">[\w-]+</requirement>
         <requirement key="pic">\w+</requirement>
         <requirement key="state">0|1|YYY</requirement>
     </route>

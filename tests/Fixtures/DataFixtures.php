@@ -63,11 +63,17 @@ class DataFixtures extends Fixture
         $pictures = [];
         for ($i = 0; $i < 3; $i++) {
             $pictures[] = $picture = new Picture();
-            $picture->setHash("pic${i}");
+            $picture->setHash("hashp${i}");
             $picture->setFolder($folder);
             $picture->setOriginalDate(new \DateTime('2020-02-02 00:02:20'));
             $picture->setPath("pic${i}.jpg");
         }
+
+        $pictures[] = $picture = new Picture();
+        $picture->setHash("hashs1");
+        $picture->setFolder($folder);
+        $picture->setOriginalDate(new \DateTime('2020-02-02 00:02:40'));
+        $picture->setPath("stream1.avi");
 
         return $pictures;
     }

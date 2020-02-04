@@ -60,6 +60,8 @@ import ZingTouch from 'zingtouch'
                     }
                 }
 
+                $('a.download').attr('href', $('a.download').data('href').replace('abcdef', $(thumbnail).data('picture')));
+
                 current = $(thumbnail).data('cursor');
                 document.location.hash = `#${current}-of-${total}`
 
@@ -215,11 +217,6 @@ import ZingTouch from 'zingtouch'
                     e.preventDefault();
 
                     toggleAutoplay()
-                })
-                .on('click', 'a.download', function(e){
-                    // e.preventDefault();
-
-                    $(this).attr('href', $(this).data('href').replace('XXX', $(self.getThumbnail()).data('picture')));
                 })
                 .on('click', 'a.fullscreen', function(e) {
                     e.preventDefault();

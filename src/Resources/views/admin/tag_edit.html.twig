@@ -6,7 +6,7 @@
     <div class="row">
         {% if tag.id %}
         <div class="col-md-4">
-            <a href="{{ path('tag_view', {hash: tag.hash, slug: tag.slug}) }}" class="btn btn-success">
+            <a href="{{ path('webelop_album_tag_view', {hash: tag.hash, slug: tag.slug}) }}" class="btn btn-success">
                 <i class="far fa-new-window"></i> Sharing is caring!
             </a>
         </div>
@@ -20,5 +20,5 @@
 {% endblock %}
 
 {% block sidebar %}
-    {{ render(controller('Webelop\\AlbumBundle\\Controller\\AdminController:sidebar', {type: 'tag'})) }}
+    {{ render(controller('webelop_album.controller.admin_controller:sidebar', {type: 'tag'})) }}
 {% endblock %}

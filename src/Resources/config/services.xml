@@ -13,6 +13,9 @@
         </service>
 
         <service id="webelop_album.controller.media_controller" class="Webelop\AlbumBundle\Controller\MediaController" public="true" autowire="true">
+            <argument type="collection">
+                <argument key="use_binary_file_response" type="constant">FALSE</argument>
+            </argument>
             <argument type="service" id="webelop_album.picture_manager"/>
             <tag name="container.service_subscriber" />
         </service>

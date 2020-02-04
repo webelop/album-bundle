@@ -9,7 +9,7 @@ class AppKernel extends \Symfony\Component\HttpKernel\Kernel
 {
     use \Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 
-    public function __construct(string $env = 'test', bool $debug = true)
+    public function __construct(string $env = 'test', bool $debug = false)
     {
         parent::__construct($env, $debug);
     }
@@ -42,7 +42,8 @@ class AppKernel extends \Symfony\Component\HttpKernel\Kernel
         $c->loadFromExtension('webelop_album', [
             'album_root' => __DIR__ . '/Pictures',
             'cache_path' => __DIR__ . '/../../../build/pictures',
-            'salt' => 'PassTheSalt!'
+            'salt' => 'PassTheSalt!',
+            'use_binary_file_response' => false, // BinaryFileResponse is not compatible with Functional testing
         ]);
 
         $c->loadFromExtension('framework', [

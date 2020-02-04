@@ -6,6 +6,7 @@ namespace Webelop\AlbumBundle\Controller;
 
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Webelop\AlbumBundle\Repository\PictureRepository;
 use Webelop\AlbumBundle\Repository\TagRepository;
@@ -37,12 +38,17 @@ class AlbumController extends AbstractController
     }
 
     /**
-     * TODO: Create a redirect rule to manager for local network (Kernel event subscriber)
-     *
      * @return Response
      */
     public function index()
     {
+        // Redirect to manager if the user is an authenticated admin
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles())) {
+            return $this->redirectToRoute('webelop_album_admin_index');
+        }
+
         return $this->render('@WebelopAlbum/album/index.html.twig');
     }
 

@@ -4,12 +4,12 @@
 
 {% block body %}
 <div class="row">
-    <a href='{{ path('webelop_album_admin_tag_edit') }}' class="btn btn-success">
+    <a href='{{ path('webelop_album_admin_tag_new') }}' class="btn btn-success">
         <i class="fas fa-plus"></i> New tag
     </a>
 </div>
 {% endblock %}
 
 {% block sidebar %}
-    {{ render(controller('Webelop\\AlbumBundle\\Controller\\AdminController:sidebar', {type: 'tag'})) }}
+    {{ render(controller('webelop_album.controller.admin_controller:sidebar', {type: 'tag'})) }}
 {% endblock %}

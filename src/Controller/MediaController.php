@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -23,15 +24,19 @@ class MediaController extends AbstractController
     private $pictureManager;
     /** @var LoggerInterface */
     private $logger;
+    /** @var bool */
+    private $useBinaryFileResponse;
 
     /**
+     * @param array           $config
      * @param PictureManager  $pictureManager
      * @param LoggerInterface $logger
      */
-    public function __construct(PictureManager $pictureManager, LoggerInterface $logger)
+    public function __construct(array $config, PictureManager $pictureManager, LoggerInterface $logger)
     {
         $this->pictureManager = $pictureManager;
         $this->logger = $logger;
+        $this->useBinaryFileResponse = $config['use_binary_file_response'];
     }
 
     /**
@@ -43,7 +48,7 @@ class MediaController extends AbstractController
      *
      * @return BinaryFileResponse
      */
-    public function picture(Request $request, string $mode, int $width, int $height, string $hash): Response
+    public function pictureAction(Request $request, string $mode, int $width, int $height, string $hash): Response
     {
         if (1 == $request->query->get('resized')) {
             return $this->handleException(new RuntimeException(
@@ -54,13 +59,12 @@ class MediaController extends AbstractController
         }
 
         try {
-            $targetPath = str_replace('/pictures/', '', $request->getPathInfo());
-            $cachePath = $this->pictureManager->generateResizedFile($mode, $width, $height, $hash, $targetPath);
+            $cachePath = $this->pictureManager->generateResizedFile($mode, $width, $height, $hash);
+
+            return $this->prepareBinaryResponse($cachePath);
         } catch (RuntimeException $exception) {
             return $this->handleException($exception);
         }
-
-        return new BinaryFileResponse($cachePath);
     }
 
     /**
@@ -68,20 +72,15 @@ class MediaController extends AbstractController
      *
      * @return BinaryFileResponse|Response
      */
-    public function download(string $hash): Response
+    public function downloadAction(string $hash): Response
     {
         try {
-            $pictureRepo = $this->getDoctrine()->getRepository(Picture::class);
-            $picture = $pictureRepo->findOneByHash($hash);
-            $cachePath = $this->pictureManager->downloadFile($picture);
+            $originalPath = $this->pictureManager->downloadFile($hash);
 
-            $response = new BinaryFileResponse($cachePath);
-            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($picture->getPath()));
+            return $this->prepareBinaryResponse($originalPath, basename($originalPath));
         } catch (RuntimeException $exception) {
             return $this->handleException($exception);
         }
-
-        return $response;
     }
 
     /**
@@ -93,14 +92,12 @@ class MediaController extends AbstractController
     public function streamAction(Request $request, string $hash): Response
     {
         try {
-            $pictureRepo = $this->getDoctrine()->getRepository(Picture::class);
-            $picture = $pictureRepo->findOneByHash($hash);
-            $cachePath = $this->pictureManager->prepareStream($picture, $request->getRequestFormat());
+            $cachePath = $this->pictureManager->prepareStream($hash, $request->getRequestFormat());
+
+            return $this->prepareBinaryResponse($cachePath);
         } catch (RuntimeException $e) {
             return $this->handleException($e);
         }
-
-        return new BinaryFileResponse($cachePath);;
     }
 
     /**
@@ -110,16 +107,33 @@ class MediaController extends AbstractController
      */
     protected function handleException(\RuntimeException $exception): Response
     {
-        var_dump($exception->getMessage());
         if (Response::HTTP_NOT_FOUND === $exception->getCode()) {
             $this->logger->warning($exception->getMessage());
         } else {
             $this->logger->error($exception->getMessage());
         }
 
-        return new Response(
-            'An error occurred during the request',
-            $exception->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR
-        );
+        return new RedirectResponse('/bundles/webelopalbum/images/missing-image.png');
+    }
+
+    /**
+     * @param string      $cachePath
+     * @param string|null $filename
+     *
+     * @return BinaryFileResponse|Response
+     */
+    private function prepareBinaryResponse(string $cachePath, ?string $filename = null): Response
+    {
+        // Functional tests cannot use the BinaryFileResponse because it's contents are not parsed by the crawler.
+        if (!$this->useBinaryFileResponse) {
+            return new Response(trim(file_get_contents($cachePath)));
+        }
+
+        $response = new BinaryFileResponse($cachePath);
+        if ($filename) {
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $filename);
+        }
+
+        return $response;
     }
 }

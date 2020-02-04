@@ -19,5 +19,6 @@
   "bundles/webelop-album/images/fa-regular-400.svg": "./images/fa-regular-400.d2e53334.svg",
   "bundles/webelop-album/images/fa-solid-900.svg": "./images/fa-solid-900.7a5de9b0.svg",
   "bundles/webelop-album/images/favicon.png": "./images/favicon.png",
-  "bundles/webelop-album/images/loading.gif": "./images/loading.gif"
+  "bundles/webelop-album/images/loading.gif": "./images/loading.gif",
+  "bundles/webelop-album/images/missing-image.png": "./images/missing-image.png"
 }
