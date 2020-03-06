@@ -9,6 +9,7 @@
             "email": "jcc@webelop.net"
         }
     ],
+    "bin": ["bin/photosync"],
     "require": {
         "php": "^7.1.3",
         "doctrine/common": "^2.8",

@@ -198,7 +198,7 @@ class Picture
      */
     public function isStream()
     {
-        return in_array(strtolower(pathinfo($this->path, PATHINFO_EXTENSION)), array('mov', 'mp4'));
+        return in_array(strtolower(pathinfo($this->path, PATHINFO_EXTENSION)), array('mov', 'mp4', 'mkv', 'avi'));
     }
 
     public function getTags()
