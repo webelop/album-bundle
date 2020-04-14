@@ -27,7 +27,7 @@ function prepare {
 
   if [ ! -f "$dir/.preview/$base.mp4" ]; then
     echo "Encoding $file for web"
-    ffmpeg -i "$file" -vf "scale='min(1080,iw)':-2" -c:v libx264 -b:v 1500k -c:a aac "$dir/.preview/$base.mp4"
+    ffmpeg -i "$file" -vf "scale='min(1080,iw)':-2" -c:v libx264 -b:v 600k -c:a aac "$dir/.preview/$base.mp4"
   fi
 
   if [ ! -f "$dir/.preview/crop/200/200/$base.jpg" ]; then
