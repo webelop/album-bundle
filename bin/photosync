@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # 1st argument: path to configuration file (default ~/.photosync)
-
+set -euo pipefail
 CONFIG_PATH=${1:-"$HOME/.photosync"}
 
 if [ -f $CONFIG_PATH ]
@@ -68,11 +68,12 @@ countModules () {
 
 # Execute sub-modules
 SCRIPTDIR=`dirname $0`
-rm $SCRIPTDIR/photosync-module-*.sh.run 2>/dev/null
+rm $SCRIPTDIR/photosync-module-*.sh.run 2>/dev/null || echo "No module run files to remove"
 find $SCRIPTDIR -name 'photosync-module-*.sh' | while read module; do
-  echo "executing $module"
-  echo "1" > "$module.run"
-  sleep 3 && . $module "$LOCAL_ROOT" >> ~/.photosync.log 2>&1 && echo "0" > "$module.run" &
+  echo "executing ${module}"
+  echo "1" > "${module}.run"
+  sleep 1
+  ( (. ${module} "$LOCAL_ROOT" >> ~/.photosync.log 2>&1) || echo "Failed executing ${module}"; echo "0" > "${module}.run") &
 done
 
 # Prepare synchronisation
@@ -86,15 +87,15 @@ unison -ui text -batch $FAT "$LOCAL_ROOT" "$REMOTE_URI"
 # Wait for modules to finish running
 while [ $(countModules 1) -gt '0' ]
 do
-  echo "Waiting for $(countModules 1) modules to complete"
+  echo -en "\r Waiting for $(countModules 1) modules to complete..."
   sleep 2;
 done
 
 # Re-run synchronisation
 if [ $(countModules 0) -gt '0' ]
 then
-  echo "$(countModules 0) modules finished... Rerunning sync"
-  rm $SCRIPTDIR/photosync-module-*.sh.run  
+  echo -e "$(countModules 0) modules finished... Rerunning sync"
+  rm $SCRIPTDIR/photosync-module-*.sh.run
   unison -ui text -batch $FAT "$LOCAL_ROOT" "$REMOTE_URI"
 fi
 

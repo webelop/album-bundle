@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -euo pipefail
 
 echo "Started EPEG encoding module"
 
@@ -18,7 +19,7 @@ function prepareJpg {
 
   if [ ! -f "$file" ]; then
     echo "$file is not a file"
-    return	
+    return
   fi
 
   dir=$(dirname "$file")
