@@ -1,0 +1,11 @@
+#!/bin/bash
+# This command prepares docker environment and runs all tests on the bundle
+
+set -eux -o pipefail
+
+root_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
+
+"${root_path}/bin/dcompose" up -d
+"${root_path}/bin/dcomposer" install
+"${root_path}/bin/dcompose" exec php vendor/bin/simple-phpunit
+"${root_path}/bin/dcompose" down
