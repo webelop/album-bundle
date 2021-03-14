@@ -1,6 +1,6 @@
 # Webelop/AlbumBundle
 
-This is a complete [Symfony](https://symfony.com/doc/current/setup.html) bundle for running a light-weight photo browsing 
+This is a complete [Symfony](https://symfony.com/doc/current/setup.html) bundle for running a light-weight photo browsing
 and sharing website on a PHP server.
 
 The server may resize and prepare the previews and video streams or rely on existing previews generated on the end-user's
@@ -26,7 +26,7 @@ This bundle depends on Doctrine bundle, Symfony security, routing and Twig
     ```
     _webelop_album:
       resource: '@WebelopAlbumBundle/Resources/config/routes.xml'
-      prefix: /album  
+      prefix: /album
     ```
 - Ensure security is setup for the bundle in `config/packages/security.yaml`. Eg:
   ```
@@ -38,14 +38,20 @@ This bundle depends on Doctrine bundle, Symfony security, routing and Twig
 
 ## Additional helpers:
 ### bin/photosync
-A shell utility which uses [unison](https://www.cis.upenn.edu/~bcpierce/unison/) and helper modules to 
+A shell utility which uses [unison](https://www.cis.upenn.edu/~bcpierce/unison/) and helper modules to
 resize pictures, purge dropbox uploads or prepare video previews on the host computer.
 
-When photosync is setup, computers in the household become master photo devices. Running `photosync` will 
+When photosync is setup, computers in the household become master photo devices. Running `photosync` will
 synchronise a preset folder from any computer to the server and optionally prepare preview files. This allows the server
-to be directly ready to serve the new images after successful sync.   
+to be directly ready to serve the new images after successful sync.
 
 ## Useful resources:
 - [eko/docker-symfony](https://github.com/eko/docker-symfony): a complete docker-composer image for running a symfony project
 - [unison](https://www.cis.upenn.edu/~bcpierce/unison/): a two-way, ssh based sync utility. It must be installed and on the same version
 on both client and server.
+
+## Contributing
+
+Thanks for considering contributing to this project. You are very welcome to propose a PR!
+You should first check locally that `bin/all-tests` runs properly and ensure that any changes
+leave the codebase as clean and secure as possible
