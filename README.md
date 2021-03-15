@@ -37,13 +37,30 @@ This bundle depends on Doctrine bundle, Symfony security, routing and Twig
 - Access the site at eg: [http://localhost/album/manager](http://localhost/album/manager)
 
 ## Additional helpers:
+
 ### bin/photosync
+
 A shell utility which uses [unison](https://www.cis.upenn.edu/~bcpierce/unison/) and helper modules to
 resize pictures, purge dropbox uploads or prepare video previews on the host computer.
 
 When photosync is setup, computers in the household become master photo devices. Running `photosync` will
 synchronise a preset folder from any computer to the server and optionally prepare preview files. This allows the server
 to be directly ready to serve the new images after successful sync.
+
+### docker-compose template
+
+`docker/docker-compose.yml` refers to a nginx, php-fpm, mysql install which can be used to test the bundle.
+
+```
+# Start docker-composer as a daemon
+bin/dcompose up -d
+
+# Install composer dependencies
+bin/dcomposer install
+
+# Run bundle tests
+bin/dcompose exec php vendor/bin/simple-phpunit
+```
 
 ## Useful resources:
 - [eko/docker-symfony](https://github.com/eko/docker-symfony): a complete docker-composer image for running a symfony project
