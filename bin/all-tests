@@ -10,7 +10,7 @@ export PICTURE_ROOT_PATH="../tests/Fixtures/App/Pictures"
 "${root_path}/bin/dcompose" up -d
 
 # Validate and install php composer
-"${root_path}/bin/dcompose" exec -T php composer validate --strict
+"${root_path}/bin/dcompose" exec -T php composer validate --strict --no-check-lock --no-interaction
 "${root_path}/bin/dcompose" exec -T php composer install --prefer-dist --no-progress --no-suggest
 
 # Prepare picture cache path
