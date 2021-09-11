@@ -55,7 +55,7 @@ to be directly ready to serve the new images after successful sync.
 `docker/docker-compose.yml` refers to a nginx, php-fpm, mysql install which can be used to test the bundle.
 
 ```
-# Start docker-composer as a daemon
+# Start docker-compose as a daemon
 bin/dcompose up -d
 
 # Install composer dependencies

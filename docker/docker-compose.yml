@@ -20,7 +20,7 @@ services:
             - "9000:9001"
         volumes:
             - ..:/var/www/symfony:cached
-            - ${PICTURE_ROOT_PATH}:/pictures
+            - ${PICTURE_ROOT_PATH:-./tests/Fixtures/App/Pictures}:/pictures
             - ./logs/symfony:/var/www/symfony/var/log:cached
         links:
             - db
@@ -32,7 +32,7 @@ services:
             - php
         volumes:
             - ..:/var/www/symfony:cached
-            - ${PICTURE_ROOT_PATH}:/pictures
+            - ${PICTURE_ROOT_PATH:-./tests/Fixtures/App/Pictures}:/pictures
             - ./logs/nginx:/var/log/nginx:cached
     encore:
         image: node:10-alpine
