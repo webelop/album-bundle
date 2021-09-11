@@ -7,15 +7,18 @@ The server may resize and prepare the previews and video streams or rely on exis
 computer. As the bundle is designed to work on low-powered devices, it is advised to install the additional helpers on
 the local computers to synchronise and prepare the image previews.
 
+Packagist: [Webelop/AlbumBundle](https://packagist.org/packages/webelop/album-bundle)
+
 ## Requirements
 
 This bundle depends on Doctrine bundle, Symfony security, routing and Twig
 
 ## Installation
-- First install the composer package:
-```composer install webelop/album-bundle```
 
-- Make sure you adjust the configuration in `config/packages/webelop_album.yml` or `.env`
+- Install the composer package:
+```composer require webelop/album-bundle```
+
+- Adjust the configuration in `config/packages/webelop_album.yml` or `.env`
     ```
     # Path to the pictures directory on the server
     WEBELOP_ALBUM_ROOT="/path/to/pictures"
@@ -28,7 +31,7 @@ This bundle depends on Doctrine bundle, Symfony security, routing and Twig
       resource: '@WebelopAlbumBundle/Resources/config/routes.xml'
       prefix: /album
     ```
-- Ensure security is setup for the bundle in `config/packages/security.yaml`. Eg:
+- Set-up security for the bundle in `config/packages/security.yaml`. Eg:
   ```
       access_control:
         - { path: ^/album/manager, roles: ROLE_ADMIN }
@@ -63,6 +66,7 @@ bin/dcompose exec php vendor/bin/simple-phpunit
 ```
 
 ## Useful resources:
+
 - [eko/docker-symfony](https://github.com/eko/docker-symfony): a complete docker-composer image for running a symfony project
 - [unison](https://www.cis.upenn.edu/~bcpierce/unison/): a two-way, ssh based sync utility. It must be installed and on the same version
 on both client and server.
