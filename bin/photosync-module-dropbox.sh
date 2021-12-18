@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -euf -o pipefail
 
 echo "Started Dropbox archiving module"
 

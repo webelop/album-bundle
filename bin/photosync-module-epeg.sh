@@ -1,26 +1,19 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euf -o pipefail
 
 echo "Started EPEG encoding module"
 
-PICTUREDIR="$1"
-if [ "$PICTUREDIR" == "" ]; then
-  echo "Missing PICTUREDIR"
-  exit;
+# Arguments
+PICTUREDIR="${1:-}"
+MAXDEPTH="${2:-2}"
+
+if [[ -z "$PICTUREDIR" ]] || [[ ! -d "$PICTUREDIR" ]]; then
+  echo "1st argument must be a valid directory"
+  exit 1
 fi
 
-if [ ! -d "$PICTUREDIR" ]; then
-  echo "$PICTUREDIR is not a directory"
-  exit
-fi
-
-function prepareJpg {
+preparePreview () {
   file="$1"
-
-  if [ ! -f "$file" ]; then
-    echo "$file is not a file"
-    return
-  fi
 
   dir=$(dirname "$file")
   base=$(basename "$file")
@@ -41,13 +34,12 @@ function prepareJpg {
   if [ ! -f "$target" ]; then
     mkdir -p "$dir/.preview/crop/200/200/"
     echo "Encoding $file to $target"
-    epeg "$file" -m 400 --inset -q 50 "$target.1" && \
-      convert "$target.1" -quality 30 -auto-orient -gravity center -crop 400x400+0+0 +repage "$target" && \
-      rm "$target.1"
+    epeg "$file" -m 400 --inset -q 50 "$target.1"
+    convert "$target.1" -quality 30 -auto-orient -gravity center -crop 400x400+0+0 +repage "$target" \
+    rm "$target.1"
   fi
 }
 
-export -f prepareJpg
-find "$PICTUREDIR" -maxdepth 2 \( -iname '*.jpg' -o -iname '*.jpeg' \) -exec bash -c 'prepareJpg "$0"' {} \;
-
-
+while read file; do
+  preparePreview "${file}"
+done < <( find "$PICTUREDIR" -maxdepth "${MAXDEPTH}" -type f -size +0 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) )

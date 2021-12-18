@@ -1,20 +1,18 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euf -o pipefail
 
 echo "Started WEBM encoding module"
 
-PICTUREDIR="$1"
-if [ "$PICTUREDIR" == "" ]; then
-  echo "Missing PICTUREDIR"
-  exit;
+# Arguments
+PICTUREDIR="${1:-}"
+MAXDEPTH="${2:-2}"
+
+if [[ -z "$PICTUREDIR" ]] || [[ ! -d "$PICTUREDIR" ]]; then
+  echo "1st argument must be a valid directory"
+  exit 1
 fi
 
-if [ ! -d "$PICTUREDIR" ]; then
-  echo "$PICTUREDIR is not a directory"
-  exit
-fi
-
-function prepare {
+preparePreview () {
   file="$1"
 
   if [ ! -f "$file" ]; then
@@ -39,12 +37,12 @@ function prepare {
 
     mkdir -p "$dir/.preview/crop/200/200/"
     echo "Encoding $dir/.preview/$base.jpg to $dir/.preview/crop/200/200/$base.jpg"
-    epeg "$dir/.preview/$base.jpg" -m 400 --inset -q 50 "$dir/.preview/crop/200/200/$base.jpg.1" && \
-      convert "$dir/.preview/crop/200/200/$base.jpg.1" -quality 30 -auto-orient -gravity center -crop 400x400+0+0 +repage "$dir/.preview/crop/200/200/$base.jpg" && \
-      rm "$dir/.preview/crop/200/200/$base.jpg.1"
+    epeg "$dir/.preview/$base.jpg" -m 400 --inset -q 50 "$dir/.preview/crop/200/200/$base.jpg.1"
+    convert "$dir/.preview/crop/200/200/$base.jpg.1" -quality 30 -auto-orient -gravity center -crop 400x400+0+0 +repage "$dir/.preview/crop/200/200/$base.jpg"
+    rm "$dir/.preview/crop/200/200/$base.jpg.1"
   fi
 }
 
-export -f prepare
-find "$PICTUREDIR" -maxdepth 2 \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.mkv' \) -exec bash -c 'prepare "$0"' {} \;
-
+while read file; do
+  preparePreview "${file}"
+done < <( find "${PICTUREDIR}" -maxdepth "${MAXDEPTH}" \( -iname '*.mp4' -o -iname '*.mov' -o -iname '*.mkv' \) )
