@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euf -o pipefail
 
-echo "Started EPEG encoding module"
+if [[ "${MODULE_JPG_DISABLED:-0}" -gt 0 ]]; then
+    echo "MODULE_JPG_DISABLED is disabled in your configuration file (eg. ~/.photosync)... Exiting module"
+    exit 0
+fi
+echo "Started JPEG encoding module"
 
 # Arguments
 PICTUREDIR="${1:-}"
@@ -10,6 +14,11 @@ MAXDEPTH="${2:-2}"
 if [[ -z "${PICTUREDIR}" ]] || [[ ! -d "${PICTUREDIR}" ]]; then
   echo "1st argument must be a valid directory"
   exit 1
+fi
+
+if ! (convert --version &> /dev/null); then
+  echo "ImageMagick must be installed on the system to use module ${BASH_SOURCE[0]}"
+  exit 0
 fi
 
 preparePreview () {
@@ -48,6 +57,6 @@ preparePreview () {
   fi
 }
 
-while read file; do
+while read -r file; do
   preparePreview "${file}"
 done < <( find "${PICTUREDIR}" -maxdepth "${MAXDEPTH}" -type f -size +0 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) )
