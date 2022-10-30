@@ -59,4 +59,4 @@ preparePreview () {
 
 while read -r file; do
   preparePreview "${file}"
-done < <( find "${PICTUREDIR}" -maxdepth "${MAXDEPTH}" -type f -size +0 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) )
+done < <( find "${PICTUREDIR}" -maxdepth "${MAXDEPTH}" -type f -size +0 \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.heic' \) )
